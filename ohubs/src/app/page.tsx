@@ -26,7 +26,7 @@ export default async function IndexPage() {
     <main>
       <HeroSection />
 
-      <h1 className="text-4xl  font-serif my-6 font-bold text-center ">Posts</h1>
+      <h1 className="text-4xl  font-serif my-8 font-bold text-center ">Posts</h1>
 
       <ul className="grid sm:grid-cols-3 max-w-4xl space-x-5 p-8 mx-auto gap-y-8">
         {posts.map((post) => {
