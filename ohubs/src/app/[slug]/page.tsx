@@ -80,7 +80,7 @@ export default async function PostPage({
         />
       )}
 
-      <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
+      <h1 className="text-4xl font-bold mb-7">{post.title}</h1>
       <div className="prose">
         <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p>
 
