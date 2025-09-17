@@ -31,7 +31,7 @@ const HeroSection = () => {
                 </h1>
 
                 <p className='max-w-[85%] text-3xl md:text-5xl font-bold'>
-                    I explain and teach tech­nol­o­gy, solve tech prob­lems and help you make gad­get buy­ing decisions.
+                    We explain and teach tech­nol­o­gy, solve tech prob­lems and help you make gad­get buy­ing decisions.
                 </p>
             </div>
         </div>
