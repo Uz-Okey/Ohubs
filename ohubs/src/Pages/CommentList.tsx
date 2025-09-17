@@ -38,7 +38,7 @@ export default function CommentFormAndList({ postId }: Props) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle form submit
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -50,13 +50,28 @@ export default function CommentFormAndList({ postId }: Props) {
 
       if (res.ok) {
         const savedComment = await res.json();
-        // Show new comment instantly
-        setComments([savedComment, ...comments]);
-        // Reset form
-        setForm({ name: "", email: "", comment: "" });
+        setComments([savedComment, ...comments]); // Show instantly
+        setForm({ name: "", email: "", comment: "" }); // Reset form
       }
     } catch (err) {
       console.error("Failed to submit comment:", err);
+    }
+  };
+
+  // Handle delete comment
+  const handleDelete = async (commentId: string) => {
+    try {
+      const res = await fetch("/api/deleteComment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId }),
+      });
+
+      if (res.ok) {
+        setComments(comments.filter((c) => c._id !== commentId)); // Remove from state
+      }
+    } catch (err) {
+      console.error("Failed to delete comment:", err);
     }
   };
 
@@ -64,6 +79,7 @@ export default function CommentFormAndList({ postId }: Props) {
     <div className="mt-6">
       <h3 className="font-bold mb-3">Comments</h3>
 
+      {/* Form */}
       <form onSubmit={handleSubmit} className="mb-4">
         <input
           type="text"
@@ -99,16 +115,25 @@ export default function CommentFormAndList({ postId }: Props) {
         </button>
       </form>
 
+      {/* Comments List */}
       {comments.length === 0 ? (
         <p>No comments yet.</p>
       ) : (
-        comments.map((c, index) => (
+        comments.map((c) => (
           <div
-            key={c._id || index} // ✅ React key fixed
-            className="border-b border-gray-300 py-2"
+            key={c._id}
+            className="border-b border-gray-300 py-2 flex justify-between items-start"
           >
-            <p className="font-semibold">{c.name}</p>
-            <p className="text-sm text-gray-700">{c.comment}</p>
+            <div>
+              <p className="font-semibold">{c.name}</p>
+              <p className="text-sm text-gray-700">{c.comment}</p>
+            </div>
+            <button
+              onClick={() => handleDelete(c._id!)}
+              className="text-red-500 text-sm hover:underline"
+            >
+              Delete
+            </button>
           </div>
         ))
       )}
