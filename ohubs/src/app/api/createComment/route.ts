@@ -3,20 +3,32 @@ import { client } from "@/app/sanity/client";
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
-    const doc = {
-      _type: "comment",
-      name: data.name,
-      email: data.email,
-      comment: data.comment,
-      post: { _type: "reference", _ref: data.postId },
-      approved: true, // auto-approved for demo
-    };
+    const body = await req.json();
+    const { postId, name, email, comment } = body;
 
-    const created = await client.create(doc);
-    return NextResponse.json(created, { status: 201 });
+    if (!postId || !name || !email || !comment) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const newComment = await client.create({
+      _type: "comment",
+      post: { _type: "reference", _ref: postId },
+      name,
+      email,
+      comment,
+      approved: true, // set false if you want manual approval
+    });
+
+    // ✅ Return the full created comment
+    return NextResponse.json(newComment, { status: 201 });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
+    console.error("Create Comment API error:", err);
+    return NextResponse.json(
+      { error: "Failed to create comment" },
+      { status: 500 }
+    );
   }
 }

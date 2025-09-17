@@ -6,7 +6,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const postId = searchParams.get("postId");
 
-    if (!postId) return NextResponse.json([], { status: 400 });
+    if (!postId) {
+      return NextResponse.json([], { status: 400 });
+    }
 
     const query = `*[_type == "comment" && post._ref == $postId && approved == true] 
       | order(_createdAt desc){
@@ -19,7 +21,10 @@ export async function GET(req: NextRequest) {
     const comments = await client.fetch(query, { postId });
     return NextResponse.json(comments);
   } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
+    console.error("Comments API error:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch comments" },
+      { status: 500 }
+    );
   }
 }

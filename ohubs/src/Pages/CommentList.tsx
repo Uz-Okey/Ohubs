@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 interface Comment {
-  _id: string;
+  _id?: string;
   name: string;
   email: string;
   comment: string;
@@ -13,7 +13,7 @@ interface Props {
   postId: string;
 }
 
-const CommentList: React.FC<Props> = ({ postId }) => {
+export default function CommentFormAndList({ postId }: Props) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [form, setForm] = useState({ name: "", email: "", comment: "" });
 
@@ -32,11 +32,13 @@ const CommentList: React.FC<Props> = ({ postId }) => {
   }, [postId]);
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
+  // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -48,8 +50,10 @@ const CommentList: React.FC<Props> = ({ postId }) => {
 
       if (res.ok) {
         const savedComment = await res.json();
-        setComments([savedComment, ...comments]); // show instantly
-        setForm({ name: "", email: "", comment: "" }); // reset form
+        // Show new comment instantly
+        setComments([savedComment, ...comments]);
+        // Reset form
+        setForm({ name: "", email: "", comment: "" });
       }
     } catch (err) {
       console.error("Failed to submit comment:", err);
@@ -87,7 +91,10 @@ const CommentList: React.FC<Props> = ({ postId }) => {
           className="border p-2 mb-2 w-full"
           required
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
           Submit
         </button>
       </form>
@@ -95,8 +102,11 @@ const CommentList: React.FC<Props> = ({ postId }) => {
       {comments.length === 0 ? (
         <p>No comments yet.</p>
       ) : (
-        comments.map((c) => (
-          <div key={c._id} className="border-b border-gray-300 py-2">
+        comments.map((c, index) => (
+          <div
+            key={c._id || index} // ✅ React key fixed
+            className="border-b border-gray-300 py-2"
+          >
             <p className="font-semibold">{c.name}</p>
             <p className="text-sm text-gray-700">{c.comment}</p>
           </div>
@@ -104,6 +114,4 @@ const CommentList: React.FC<Props> = ({ postId }) => {
       )}
     </div>
   );
-};
-
-export default CommentList;
+}
