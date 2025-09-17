@@ -4,9 +4,12 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "../sanity/client";
+
+
 import Link from "next/link";
 import Image from "next/image";
 import type { SanityDocument } from "next-sanity";
+import CommentList from "@/Pages/CommentList";
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   _id,
@@ -15,7 +18,6 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   publishedAt,
   body,
   mainImage,
-  
 }`;
 
 const { projectId, dataset } = client.config();
@@ -61,7 +63,6 @@ export default async function PostPage({
     ? urlFor(post.mainImage)?.width(750).height(310).url()
     : null;
 
-  console.log("IMAGE URL:", postImageUrl);
 
   return (
     <main className="container border my-10 rounded-2xl bg-gray-100 shadow-2xl mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-4">
@@ -87,6 +88,13 @@ export default async function PostPage({
           <PortableText value={post.body} components={components} />
         )}
       </div>
+
+  
+
+      <CommentList 
+      postId={post._id} 
+      />
+
     </main>
   );
 }
